@@ -1,0 +1,7 @@
+to run the code locally, download google app engine sdk, and run the project by:
+dev_appserver.py --port=8080 .
+within the dotalight directory.
+
+then open browser http://localhost:8080, and you could see a "Hello World".
+
+don't commit .pyc files!
