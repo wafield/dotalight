@@ -4,8 +4,8 @@ import webapi
 import datetime
 
 HOST     = 'localhost'
-USER     = 'dotalight'
-DATABASE = 'dotalight'
+USER     = 'dotadebuff'
+DATABASE = 'dotadebuff'
 
 def upgrade_tables():
     conn = MySQLdb.connect(host=HOST, user=USER, db=DATABASE)
@@ -18,10 +18,12 @@ def upgrade_tables():
     return
 
 def init_tables():
-    conn = MySQLdb.connect(host=HOST, user=USER, db=DATABASE)
+    conn = MySQLdb.connect(host=HOST, user=USER, db=DATABASE, charset='utf8')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS players 
                  (steamid BIGINT UNSIGNED PRIMARY KEY, pname TEXT, avatar TEXT)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS heroes
+                 (heroid SMALLINT UNSIGNED PRIMARY KEY, hname CHAR(50))''')
     c.execute('''CREATE TABLE IF NOT EXISTS matches
                  (matchid INT UNSIGNED, accountid INT UNSIGNED, 
                   start_time BIGINT UNSIGNED, lobby_type TINYINT UNSIGNED, 
@@ -33,7 +35,19 @@ def init_tables():
                   denies SMALLINT UNSIGNED, gold SMALLINT UNSIGNED,
                   gold_pm SMALLINT UNSIGNED, xp_pm SMALLINT UNSIGNED,
                   gold_spent SMALLINT UNSIGNED, level TINYINT UNSIGNED,
-                  PRIMARY KEY (matchid, accountid))''')
+                  PRIMARY KEY (matchid, accountid),
+                  FOREIGN KEY (hero_id) REFERENCES heores(heroid))''')
+    
+    if c.execute('SELECT count(*) from heroes') and c.fetchone()[0] == 0:
+        js = webapi.get_heroes()
+        heroes = json.loads(js)['result']['heroes']
+        for hero in heroes:
+            heroid = hero['id']
+            hname = ' '.join(hero['name'].split('_')[3:]).title().decode('utf8')
+            print heroid, hname
+            print c.execute('INSERT INTO heroes VALUES (%s, %s)', (heroid, hname))
+
+    c.close()
     conn.commit()
     conn.close()
     return
@@ -72,7 +86,7 @@ def insert_player_summaries(js, db=None):
     for p in pinfo:
         fail = False
         try:
-            c.execute('INSERT INTO players VALUES (%s, "%s", "%s")',
+            c.execute('INSERT INTO players VALUES (%s, %s, %s)',
                       (p['steamid'], p['personaname'], p['avatarmedium']))
         except Exception:
             fail = True

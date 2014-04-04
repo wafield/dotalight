@@ -23,7 +23,7 @@ MatchHistoryOptions = [
     'matches_requested'
     ]
 
-URL_MatchHistory = jinja2.Template(
+URL_GetMatchHistory = jinja2.Template(
     URL_STEAMAPI + \
     '/IDOTA2Match_570/GetMatchHistory/V001/' + \
     '?key=' + KEY + \
@@ -31,11 +31,16 @@ URL_MatchHistory = jinja2.Template(
         for opt in MatchHistoryOptions])
 )
 
-URL_MatchDetails = \
+URL_GetMatchDetails = \
     URL_STEAMAPI + \
     '/IDOTA2Match_570/GetMatchDetails/V001/' + \
     '?key=' + KEY + \
     '&match_id='
+
+URL_GetHeroes = \
+    URL_STEAMAPI + \
+    '/IEconDOTA2_570/GetHeroes/V001' + \
+    '?key=' + KEY
 
 def get_player_steamid(vanityurl):
     request = URL_ResolveVanityURL + vanityurl
@@ -52,15 +57,22 @@ def get_player_summaries(steamids):
     return json
 
 def get_match_details(match_id):
-    request = URL_MatchDetails + str(match_id)
+    request = URL_GetMatchDetails + str(match_id)
     response = urllib2.urlopen(request)
     json = response.read()
     response.close()
     return json
 
+
 def get_match_histories(**kwargs):
-    request = URL_MatchHistory.render(**kwargs)
+    request = URL_GetMatchHistory.render(**kwargs)
     response = urllib2.urlopen(request)
+    json = response.read()
+    response.close()
+    return json
+
+def get_heroes():
+    response = urllib2.urlopen(URL_GetHeroes)
     json = response.read()
     response.close()
     return json
