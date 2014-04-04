@@ -157,7 +157,7 @@ def insert_match(js, accountid, db=None):
     game_mode  = details['game_mode']
     duration   = details['duration']
     win        = details['radiant_win']
-
+p
     p_slot     = player['player_slot']
     hero_id    = player['hero_id']
     kills      = player['kills']
