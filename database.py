@@ -157,13 +157,13 @@ def insert_match(js, accountid, db=None):
     game_mode  = details['game_mode']
     duration   = details['duration']
     win        = details['radiant_win']
-p
+
     p_slot     = player['player_slot']
     hero_id    = player['hero_id']
     kills      = player['kills']
     deaths     = player['deaths']
     assists    = player['assists']
-    last_hits   = player['last_hits']
+    last_hits  = player['last_hits']
     denies     = player['denies']
     gold       = player['gold']
     gold_pm    = player['gold_per_min']
