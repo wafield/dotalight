@@ -68,6 +68,10 @@ body {
   margin-right: auto;
   margin-left: auto;
 }
+.logo {
+  padding: 20px;
+  width: 40%;
+}
 
 /*
  * Header
