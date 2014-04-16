@@ -11,6 +11,10 @@ import database
 import html
 
 def application(environ, start_response):
+    reload(html)
+
+    path = environ['PATH_INFO']  # The trailing part
+
     status = '200 OK'
     output = html.HTML['portal']
 

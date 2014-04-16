@@ -11,6 +11,8 @@
 
     <link href="/dotalight/static/css/bootstrap.min.css" rel="stylesheet">
     <link href="/dotalight/static/css/portal.css" rel="stylesheet">
+    <script type="text/javascript" src="/dotalight/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/dotalight/static/js/bootstrap.min.js"></script>
   </head>
 
   <body>
@@ -21,17 +23,29 @@
             <h2 class="title">DotaLight</h2>
           </div>
           <div class="logo-container"><img src="/dotalight/static/img/dota2_logo.png" alt="Dota 2 Logo" class="logo"></div>
-          <div class="lead" id="input-box">
-            <input id="input-user-name" type="text" class="input-bar" autofocus="autofocus" placeholder="Type In Steam Vanity URL"> 
+          <div class="lead" id="input_box">
+            <form id="request" action="" method="post">
+              <input type="hidden" name="update" value="1">
+              <p><input id="input_user_name" type="text" class="input-bar" autocomplete="off" autofocus="autofocus" placeholder="Type In Steam Vanity URL"></p>
+              <p><button type="submit" class="btn btn-lg btn-default" value="submit">Update User Profile</button></p>
+            </form>
           </div>
-          <p class="lead">
-            <a href="#" class="btn btn-lg btn-default">Update User Profile</a>
-          </p>
-          <p class="disclaimer">Dota 2 match data analyzer. By DotaLight team. <br> Dota 2 is a registered trademark of Valve Corporation.</p>
         </div>
+        <p class="disclaimer">Dota 2 match data analyzer. By DotaLight team. <br> Dota 2 is a registered trademark of Valve Corporation.</p>
       </div>
     </div>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script type="text/javascript" src="/dotalight/static/js/bootstrap.min.js"></script>
+    <script>
+      $('#request').submit(function(event) {
+        var vanity_url = $('#input_user_name').val();
+        if (vanity_url.length === 0 ||
+            vanity_url !== escape(vanity_url) ||
+            vanity_url.indexOf('/') !== -1) {
+          alert("Invalid Steam Vanity URL!");
+          event.preventDefault();
+        } else {
+          $('#request').attr('action', 'account_' + vanity_url);
+        }
+      });
+    </script>
   </body>
 </html>
