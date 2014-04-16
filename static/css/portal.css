@@ -10,6 +10,7 @@ a:hover {
 }
 
 /* Custom default button */
+/*
 .btn-default,
 .btn-default:hover,
 .btn-default:focus {
@@ -18,7 +19,7 @@ a:hover {
   background-color: #fff;
   border: 1px solid #fff;
 }
-
+*/
 .input-bar {
   color: #333;
   text-shadow: none;
