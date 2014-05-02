@@ -106,3 +106,39 @@ heroes[106] = "Ember Spirit";
 heroes[107] = "Earth Spirit";
 heroes[109] = "Terrorblade";
 heroes[110] = "Phoenix";
+
+function adjust_selector() {
+    $('#hero_selector').css('width', Math.floor($(window).width() * 0.9 / 137) * 137);
+}
+$(window).resize(adjust_selector);
+adjust_selector();
+var active_class = "#strength";
+function enable_filter(nclass) {
+    $(active_class + '_class').hide();
+    $(active_class + '_filter').removeClass('active');
+    active_class = nclass
+    $(active_class + '_class').show();
+    $(active_class + '_filter').addClass('active');
+    return false;
+}
+$('#strength_filter').click(function() { return enable_filter('#strength'); });
+$('#agility_filter').click(function() { return enable_filter('#agility'); });
+$('#intelligence_filter').click(function() { return enable_filter('#intelligence'); });
+$('#strength_filter').trigger('click');
+
+$('.avatar').each(function(index) {
+    $(this).click(function() {
+	alert($(this).attr('id'));
+        $('#toggle_selector').css('display', 'none');
+        $('.steady').css('opacity', 1);
+    });
+    $(this).mousedown(function() {$(this).css('border-color', '#0f0');});
+    $(this).mouseup(function() {$(this).css('border-color', '#333');});
+    $(this).mouseleave(function() {$(this).css('border-color', '#333');});
+});
+
+$('#select_hero').click(function () {
+    $('#toggle_selector').css('display', 'block');
+    $('.steady').css('opacity', 0.1);
+});
+

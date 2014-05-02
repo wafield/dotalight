@@ -8,46 +8,11 @@
     <meta name="author" content="">
     <title>DotaLight - {{ player_name }}</title>
     <link href="/dotalight/static/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/dotalight/static/css/bootstrap-theme.min.css">
+    <link href="/dotalight/static/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/dotalight/static/css/dashboard.css" rel="stylesheet">
     <script src="/dotalight/static/js/jquery.min.js"></script>
     <script src="/dotalight/static/js/bootstrap.min.js"></script>
     <style>
-      body {
-        #background-color: #555;
-        #color: #fff;
-        padding-top: 70px;
-        padding-bottom: 30px;
-        font-size: 15pt;
-      }
-      .theme-dropdown .dropdown-menu {
-        position: static;
-        display: block;
-        margin-bottom: 20px;
-      }
-      .theme-showcase > p > .btn {
-        margin: 5px 0;
-      }
-      .navbar-avatar {
-        position: relative;
-        top: -6px;
-        height: 32px;
-        width: 32px;
-        vertical-align: middle;
-      }
-      .navbar-player {
-        position: relative;
-        top: -5px;
-        vertical-align: middle;
-      }
-      .tb-result-win {
-        color: #0f0;
-      }
-      .tb-result-lose {
-        color: #f00;
-      }
-      .match-table thead,tfoot {
-        color: #000;
-      }
     </style>
   </head>
   <body role="document">
@@ -87,47 +52,403 @@
         </div>
       </div>
     </div>
-    <div class="container" role="main">
+    <div class="container steady" role="main">
       {% if matches|length == 0 %}
       No Matches Recorded for This Player!
       {% else %}
-      <table class="match-table table">
-	<thead>
-	  <th>Hero</th>
-	  <th>Level</th>
-	  <th>Date</th>
-	  <th>Result</th>
-	  <th>K/D/A</th>
-	  <th>LH/D</th>
-	  <th>Duration</th>
-	</thead>
-      {% for match in matches %}
-        <tr>
-          <td class="tb-avatar">{{ match.hero_id }}</td>
-	  <td class="tb-level">{{ match.level }}</td>
-          <td class="tb-date">{{ match.start_time.strftime('%Y-%m-%d') }}</td>
-	  {% if match.win %}
-	  <td class="tb-result-win">Win</td>
-	  {% else %}
-	  <td class="tb-result-lose">Lose</td>
-	  {% endif %}
-          
-          <td class="tb-kda">{{ match.kills }}/{{ match.deaths }}/{{ match.assists }}</td>
-          <td class="tb-lhd">{{ match.lasthits }}/{{ match.denies }}</td>
-          <td class="tb-dur">{{ match.duration // 60 }}:{{ match.duration % 60 }}</td>
-        </tr>
-      {% endfor %}
-	<tfoot>
-	  <th>Hero</th>
-	  <th>Level</th>
-	  <th>Date</th>
-	  <th>Result</th>
-	  <th>K/D/A</th>
-	  <th>LH/D</th>
-	  <th>Duration</th>
-	</tfoot>
-      </table>
+      <div class="table-responsive">
+	<table class="match-table table" style="border-color: #f00;">
+	  <thead>
+	    <th>Hero</th>
+	    <th>Level</th>
+	    <th>Date</th>
+	    <th>Result</th>
+	    <th>K/D/A</th>
+	    <th>LH/D</th>
+	    <th>Duration</th>
+	  </thead>
+	  {% for match in matches %}
+          <tr>
+            <td class="tb-avatar"><img src="/dotalight/static/img/heroes/{{ match.hero_id }}_small.png"></td>
+	    <td class="tb-level">{{ match.level }}</td>
+            <td class="tb-date">{{ match.start_time.strftime('%Y-%m-%d') }}</td>
+	    {% if match.win %}
+	    <td class="tb-result-win">Win</td>
+	    {% else %}
+	    <td class="tb-result-lose">Lose</td>
+	    {% endif %}
+            
+            <td class="tb-kda">{{ match.kills }}/{{ match.deaths }}/{{ match.assists }}</td>
+            <td class="tb-lhd">{{ match.lasthits }}/{{ match.denies }}</td>
+            <td class="tb-dur">{{ match.duration // 60 }}:{{ match.duration % 60 }}</td>
+          </tr>
+	  {% endfor %}
+	  <tfoot>
+	    <th>Hero</th>
+	    <th>Level</th>
+	    <th>Date</th>
+	    <th>Result</th>
+	    <th>K/D/A</th>
+	    <th>LH/D</th>
+	    <th>Duration</th>
+	  </tfoot>
+	</table>
+      </div>
       {% endif %}
     </div>
+    <div id="toggle_selector" style="">
+      <div class="btn-group overview">
+	<button id="strength_filter" type="button" class="btn btn-default active"><span class="btn-text-overview" id="btn_text_str">STR</span></button>
+	<button id="agility_filter" type="button" class="btn btn-default"><span class="btn-text-overview" id="btn_text_agi">AGI</span></button>
+	<button id="intelligence_filter" type="button" class="btn btn-default"><span class="btn-text-overview" id="btn_text_int">INT</span></button>
+      </div>
+      <div id="hero_selector">
+	<div style="position: relative; left: -50%;">
+	<div id="strength_class" class="avatar-class">
+	  <div class="avatar-group">
+	    <div id="hero_avatar_7" class="avatar" style="background: url(/dotalight/static/img/heroes/7_large.png)">
+	      <span class="avatar-text">Earthshaker</span>
+	    </div>
+	    <div id="hero_avatar_18" class="avatar" style="background: url(/dotalight/static/img/heroes/18_large.png)">
+	      <span class="avatar-text">Sven</span>
+	    </div>
+	    <div id="hero_avatar_19" class="avatar" style="background: url(/dotalight/static/img/heroes/19_large.png)">
+	      <span class="avatar-text">Tiny</span>
+	    </div>
+	    <div id="hero_avatar_23" class="avatar" style="background: url(/dotalight/static/img/heroes/23_large.png)">
+	      <span class="avatar-text">Kunkka</span>
+	    </div>
+	    <div id="hero_avatar_38" class="avatar" style="background: url(/dotalight/static/img/heroes/38_large.png)">
+	      <span class="avatar-text">Beastmaster</span>
+	    </div>
+	    <div id="hero_avatar_49" class="avatar" style="background: url(/dotalight/static/img/heroes/49_large.png)">
+	      <span class="avatar-text">Dragon Knight</span>
+	    </div>
+	    <div id="hero_avatar_51" class="avatar" style="background: url(/dotalight/static/img/heroes/51_large.png)">
+	      <span class="avatar-text">Rattletrap</span>
+	    </div>
+	    <div id="hero_avatar_57" class="avatar" style="background: url(/dotalight/static/img/heroes/57_large.png)">
+	      <span class="avatar-text">Omniknight</span>
+	    </div>
+	    <div id="hero_avatar_59" class="avatar" style="background: url(/dotalight/static/img/heroes/59_large.png)">
+	      <span class="avatar-text">Huskar</span>
+	    </div>
+	    <div id="hero_avatar_73" class="avatar" style="background: url(/dotalight/static/img/heroes/73_large.png)">
+	      <span class="avatar-text">Alchemist</span>
+	    </div>
+	    <div id="hero_avatar_78" class="avatar" style="background: url(/dotalight/static/img/heroes/78_large.png)">
+	      <span class="avatar-text">Brewmaster</span>
+	    </div>
+	    <div id="hero_avatar_83" class="avatar" style="background: url(/dotalight/static/img/heroes/83_large.png)">
+	      <span class="avatar-text">Treant</span>
+	    </div>
+	    <div id="hero_avatar_91" class="avatar" style="background: url(/dotalight/static/img/heroes/91_large.png)">
+	      <span class="avatar-text">Wisp</span>
+	    </div>
+	    <div id="hero_avatar_96" class="avatar" style="background: url(/dotalight/static/img/heroes/96_large.png)">
+	      <span class="avatar-text">Centaur</span>
+	    </div>
+	    <div id="hero_avatar_98" class="avatar" style="background: url(/dotalight/static/img/heroes/98_large.png)">
+	      <span class="avatar-text">Shredder</span>
+	    </div>
+	    <div id="hero_avatar_99" class="avatar" style="background: url(/dotalight/static/img/heroes/99_large.png)">
+	      <span class="avatar-text">Bristleback</span>
+	    </div>
+	    <div id="hero_avatar_100" class="avatar" style="background: url(/dotalight/static/img/heroes/100_large.png)">
+	      <span class="avatar-text">Tusk</span>
+	    </div>
+	    <div id="hero_avatar_103" class="avatar" style="background: url(/dotalight/static/img/heroes/103_large.png)">
+	      <span class="avatar-text">Elder Titan</span>
+	    </div>
+	    <div id="hero_avatar_104" class="avatar" style="background: url(/dotalight/static/img/heroes/104_large.png)">
+	      <span class="avatar-text">Legion Commander</span>
+	    </div>  
+	    <div id="hero_avatar_107" class="avatar" style="background: url(/dotalight/static/img/heroes/107_large.png)">
+	      <span class="avatar-text">Earth Spirit</span>
+	    </div>
+	    <div id="hero_avatar_110" class="avatar" style="background: url(/dotalight/static/img/heroes/110_large.png)">
+	      <span class="avatar-text">Phoenix</span>
+	    </div>
+	  </div>
+	  <div class="avatar-group-divider"><hr></div>
+	  <div class="avatar-group">
+	    <div id="hero_avatar_2" class="avatar" style="background: url(/dotalight/static/img/heroes/2_large.png)">
+	      <span class="avatar-text">Axe</span>
+	    </div>
+	    <div id="hero_avatar_14" class="avatar" style="background: url(/dotalight/static/img/heroes/14_large.png)">
+	      <span class="avatar-text">Pudge</span>
+	    </div>
+	    <div id="hero_avatar_16" class="avatar" style="background: url(/dotalight/static/img/heroes/16_large.png)">
+	      <span class="avatar-text">Sand King</span>
+	    </div>
+	    <div id="hero_avatar_28" class="avatar" style="background: url(/dotalight/static/img/heroes/28_large.png)">
+	      <span class="avatar-text">Slardar</span>
+	    </div>
+	    <div id="hero_avatar_29" class="avatar" style="background: url(/dotalight/static/img/heroes/29_large.png)">
+	      <span class="avatar-text">Tidehunter</span>
+	    </div>
+	    <div id="hero_avatar_42" class="avatar" style="background: url(/dotalight/static/img/heroes/42_large.png)">
+	      <span class="avatar-text">Skeleton King</span>
+	    </div>
+	    <div id="hero_avatar_54" class="avatar" style="background: url(/dotalight/static/img/heroes/54_large.png)">
+	      <span class="avatar-text">Life Stealer</span>
+	    </div>
+	    <div id="hero_avatar_60" class="avatar" style="background: url(/dotalight/static/img/heroes/60_large.png)">
+	      <span class="avatar-text">Night Stalker</span>
+	    </div>
+	    <div id="hero_avatar_69" class="avatar" style="background: url(/dotalight/static/img/heroes/69_large.png)">
+	      <span class="avatar-text">Doom Bringer</span>
+	    </div>
+	    <div id="hero_avatar_71" class="avatar" style="background: url(/dotalight/static/img/heroes/71_large.png)">
+	      <span class="avatar-text">Spirit Breaker</span>
+	    </div>
+	    <div id="hero_avatar_77" class="avatar" style="background: url(/dotalight/static/img/heroes/77_large.png)">
+	      <span class="avatar-text">Lycan</span>
+	    </div>
+	    <div id="hero_avatar_81" class="avatar" style="background: url(/dotalight/static/img/heroes/81_large.png)">
+	      <span class="avatar-text">Chaos Knight</span>
+	    </div>
+	    <div id="hero_avatar_85" class="avatar" style="background: url(/dotalight/static/img/heroes/85_large.png)">
+	      <span class="avatar-text">Undying</span>
+	    </div>
+	    <div id="hero_avatar_97" class="avatar" style="background: url(/dotalight/static/img/heroes/97_large.png)">
+	      <span class="avatar-text">Magnataur</span>
+	    </div>
+	    <div id="hero_avatar_102" class="avatar" style="background: url(/dotalight/static/img/heroes/102_large.png)">
+	      <span class="avatar-text">Abaddon</span>
+	    </div>
+	  </div>
+	</div>
+	<div id="agility_class" class="avatar-class">
+	  <div class="avatar-group">
+	    <div id="hero_avatar_1" class="avatar" style="background: url(/dotalight/static/img/heroes/1_large.png)">
+	      <span class="avatar-text">Antimage</span>
+	    </div>
+	    <div id="hero_avatar_6" class="avatar" style="background: url(/dotalight/static/img/heroes/6_large.png)">
+	      <span class="avatar-text">Drow Ranger</span>
+	    </div> 
+	    <div id="hero_avatar_8" class="avatar" style="background: url(/dotalight/static/img/heroes/8_large.png)">
+	      <span class="avatar-text">Juggernaut</span>
+	    </div> 
+	    <div id="hero_avatar_9" class="avatar" style="background: url(/dotalight/static/img/heroes/9_large.png)">
+	      <span class="avatar-text">Mirana</span>
+	    </div> 
+	    <div id="hero_avatar_10" class="avatar" style="background: url(/dotalight/static/img/heroes/10_large.png)">
+	      <span class="avatar-text">Morphling</span>
+	    </div>  
+	    <div id="hero_avatar_12" class="avatar" style="background: url(/dotalight/static/img/heroes/12_large.png)">
+	      <span class="avatar-text">Phantom Lancer</span>
+	    </div>
+	    <div id="hero_avatar_20" class="avatar" style="background: url(/dotalight/static/img/heroes/20_large.png)">
+	      <span class="avatar-text">Vengefulspirit</span>
+	    </div>
+	    <div id="hero_avatar_32" class="avatar" style="background: url(/dotalight/static/img/heroes/32_large.png)">
+	      <span class="avatar-text">Riki</span>
+	    </div>
+	    <div id="hero_avatar_35" class="avatar" style="background: url(/dotalight/static/img/heroes/35_large.png)">
+	      <span class="avatar-text">Sniper</span>
+	    </div>
+	    <div id="hero_avatar_46" class="avatar" style="background: url(/dotalight/static/img/heroes/46_large.png)">
+	      <span class="avatar-text">Templar Assassin</span>
+	    </div>
+	    <div id="hero_avatar_48" class="avatar" style="background: url(/dotalight/static/img/heroes/48_large.png)">
+	      <span class="avatar-text">Luna</span>
+	    </div>
+	    <div id="hero_avatar_62" class="avatar" style="background: url(/dotalight/static/img/heroes/62_large.png)">
+	      <span class="avatar-text">Bounty Hunter</span>
+	    </div>
+	    <div id="hero_avatar_70" class="avatar" style="background: url(/dotalight/static/img/heroes/70_large.png)">
+	      <span class="avatar-text">Ursa</span>
+	    </div>
+	    <div id="hero_avatar_72" class="avatar" style="background: url(/dotalight/static/img/heroes/72_large.png)">
+	      <span class="avatar-text">Gyrocopter</span>
+	    </div>
+	    <div id="hero_avatar_80" class="avatar" style="background: url(/dotalight/static/img/heroes/80_large.png)">
+	      <span class="avatar-text">Lone Druid</span>
+	    </div>
+	    <div id="hero_avatar_89" class="avatar" style="background: url(/dotalight/static/img/heroes/89_large.png)">
+	      <span class="avatar-text">Naga Siren</span>
+	    </div>
+	    <div id="hero_avatar_95" class="avatar" style="background: url(/dotalight/static/img/heroes/95_large.png)">
+	      <span class="avatar-text">Troll Warlord</span>
+	    </div>
+	    <div id="hero_avatar_106" class="avatar" style="background: url(/dotalight/static/img/heroes/106_large.png)">
+	      <span class="avatar-text">Ember Spirit</span>
+	    </div>
+	  </div>
+	  <div class="avatar-group-divider"><hr></div>
+	  <div class="avatar-group">
+	    <div id="hero_avatar_4" class="avatar" style="background: url(/dotalight/static/img/heroes/4_large.png)">
+	      <span class="avatar-text">Bloodseeker</span>
+	    </div>
+	    <div id="hero_avatar_11" class="avatar" style="background: url(/dotalight/static/img/heroes/11_large.png)">
+	      <span class="avatar-text">Nevermore</span>
+	    </div>
+	    <div id="hero_avatar_15" class="avatar" style="background: url(/dotalight/static/img/heroes/15_large.png)">
+	      <span class="avatar-text">Razor</span>
+	    </div>
+	    <div id="hero_avatar_40" class="avatar" style="background: url(/dotalight/static/img/heroes/40_large.png)">
+	      <span class="avatar-text">Venomancer</span>
+	    </div> 
+	    <div id="hero_avatar_41" class="avatar" style="background: url(/dotalight/static/img/heroes/41_large.png)">
+	      <span class="avatar-text">Faceless Void</span>
+	    </div>
+	    <div id="hero_avatar_44" class="avatar" style="background: url(/dotalight/static/img/heroes/44_large.png)">
+	      <span class="avatar-text">Phantom Assassin</span>
+	    </div>
+	    <div id="hero_avatar_47" class="avatar" style="background: url(/dotalight/static/img/heroes/47_large.png)">
+	      <span class="avatar-text">Viper</span>
+	    </div>
+	    <div id="hero_avatar_56" class="avatar" style="background: url(/dotalight/static/img/heroes/56_large.png)">
+	      <span class="avatar-text">Clinkz</span>
+	    </div>
+	    <div id="hero_avatar_61" class="avatar" style="background: url(/dotalight/static/img/heroes/61_large.png)">
+	      <span class="avatar-text">Broodmother</span>
+	    </div> 
+	    <div id="hero_avatar_63" class="avatar" style="background: url(/dotalight/static/img/heroes/63_large.png)">
+	      <span class="avatar-text">Weaver</span>
+	    </div>
+	    <div id="hero_avatar_67" class="avatar" style="background: url(/dotalight/static/img/heroes/67_large.png)">
+	      <span class="avatar-text">Spectre</span>
+	    </div>
+	    <div id="hero_avatar_82" class="avatar" style="background: url(/dotalight/static/img/heroes/82_large.png)">
+	      <span class="avatar-text">Meepo</span>
+	    </div>
+	    <div id="hero_avatar_88" class="avatar" style="background: url(/dotalight/static/img/heroes/88_large.png)">
+	      <span class="avatar-text">Nyx Assassin</span>
+	    </div>
+	    <div id="hero_avatar_93" class="avatar" style="background: url(/dotalight/static/img/heroes/93_large.png)">
+	      <span class="avatar-text">Slark</span>
+	    </div> 
+	    <div id="hero_avatar_94" class="avatar" style="background: url(/dotalight/static/img/heroes/94_large.png)">
+	      <span class="avatar-text">Medusa</span>
+	    </div>
+	    <div id="hero_avatar_109" class="avatar" style="background: url(/dotalight/static/img/heroes/109_large.png)">
+	      <span class="avatar-text">Terrorblade</span>
+	    </div>
+	  </div>
+	</div>
+	<div id="intelligence_class" class="avatar-class">
+	  <div class="avatar-group">
+	    <div id="hero_avatar_5" class="avatar" style="background: url(/dotalight/static/img/heroes/5_large.png)">
+	      <span class="avatar-text">Crystal Maiden</span>
+	    </div>
+	    <div id="hero_avatar_13" class="avatar" style="background: url(/dotalight/static/img/heroes/13_large.png)">
+	      <span class="avatar-text">Puck</span>
+	    </div>
+	    <div id="hero_avatar_17" class="avatar" style="background: url(/dotalight/static/img/heroes/17_large.png)">
+	      <span class="avatar-text">Storm Spirit</span>
+	    </div>
+	    <div id="hero_avatar_21" class="avatar" style="background: url(/dotalight/static/img/heroes/21_large.png)">
+	      <span class="avatar-text">Windrunner</span>
+	    </div> 
+	    <div id="hero_avatar_22" class="avatar" style="background: url(/dotalight/static/img/heroes/22_large.png)">
+	      <span class="avatar-text">Zuus</span>
+	    </div> 
+	    <div id="hero_avatar_25" class="avatar" style="background: url(/dotalight/static/img/heroes/25_large.png)">
+	      <span class="avatar-text">Lina</span>
+	    </div>
+	    <div id="hero_avatar_27" class="avatar" style="background: url(/dotalight/static/img/heroes/27_large.png)">
+	      <span class="avatar-text">Shadow Shaman</span>
+	    </div>
+	    <div id="hero_avatar_34" class="avatar" style="background: url(/dotalight/static/img/heroes/34_large.png)">
+	      <span class="avatar-text">Tinker</span>
+	    </div>
+	    <div id="hero_avatar_53" class="avatar" style="background: url(/dotalight/static/img/heroes/53_large.png)">
+	      <span class="avatar-text">Furion</span>
+	    </div>
+	    <div id="hero_avatar_58" class="avatar" style="background: url(/dotalight/static/img/heroes/58_large.png)">
+	      <span class="avatar-text">Enchantress</span>
+	    </div>
+	    <div id="hero_avatar_64" class="avatar" style="background: url(/dotalight/static/img/heroes/64_large.png)">
+	      <span class="avatar-text">Jakiro</span>
+	    </div>
+	    <div id="hero_avatar_66" class="avatar" style="background: url(/dotalight/static/img/heroes/66_large.png)">
+	      <span class="avatar-text">Chen</span>
+	    </div>
+	    <div id="hero_avatar_75" class="avatar" style="background: url(/dotalight/static/img/heroes/75_large.png)">
+	      <span class="avatar-text">Silencer</span>
+	    </div>
+	    <div id="hero_avatar_84" class="avatar" style="background: url(/dotalight/static/img/heroes/84_large.png)">
+	      <span class="avatar-text">Ogre Magi</span>
+	    </div>  
+	    <div id="hero_avatar_86" class="avatar" style="background: url(/dotalight/static/img/heroes/86_large.png)">
+	      <span class="avatar-text">Rubick</span>
+	    </div> 
+	    <div id="hero_avatar_87" class="avatar" style="background: url(/dotalight/static/img/heroes/87_large.png)">
+	      <span class="avatar-text">Disruptor</span>
+	    </div> 
+	    <div id="hero_avatar_90" class="avatar" style="background: url(/dotalight/static/img/heroes/90_large.png)">
+	      <span class="avatar-text">Keeper Of The Light</span>
+	    </div>
+	    <div id="hero_avatar_101" class="avatar" style="background: url(/dotalight/static/img/heroes/101_large.png)">
+	      <span class="avatar-text">Skywrath Mage</span>
+	    </div>
+	  </div>
+	  <div class="avatar-group-divider"><hr></div>
+	  <div class="avatar-group">
+	    <div id="hero_avatar_3" class="avatar" style="background: url(/dotalight/static/img/heroes/3_large.png)">
+	      <span class="avatar-text">Bane</span>
+	    </div>
+	    <div id="hero_avatar_31" class="avatar" style="background: url(/dotalight/static/img/heroes/31_large.png)">
+	      <span class="avatar-text">Lich</span>
+	    </div>
+	    <div id="hero_avatar_26" class="avatar" style="background: url(/dotalight/static/img/heroes/26_large.png)">
+	      <span class="avatar-text">Lion</span>
+	    </div>
+	    <div id="hero_avatar_30" class="avatar" style="background: url(/dotalight/static/img/heroes/30_large.png)">
+	      <span class="avatar-text">Witch Doctor</span>
+	    </div>
+	    <div id="hero_avatar_33" class="avatar" style="background: url(/dotalight/static/img/heroes/33_large.png)">
+	      <span class="avatar-text">Enigma</span>
+	    </div> 
+	    <div id="hero_avatar_36" class="avatar" style="background: url(/dotalight/static/img/heroes/36_large.png)">
+	      <span class="avatar-text">Necrolyte</span>
+	    </div> 
+	    <div id="hero_avatar_37" class="avatar" style="background: url(/dotalight/static/img/heroes/37_large.png)">
+	      <span class="avatar-text">Warlock</span>
+	    </div> 
+	    <div id="hero_avatar_39" class="avatar" style="background: url(/dotalight/static/img/heroes/39_large.png)">
+	      <span class="avatar-text">Queen Of Pain</span>
+	    </div> 
+	    <div id="hero_avatar_43" class="avatar" style="background: url(/dotalight/static/img/heroes/43_large.png)">
+	      <span class="avatar-text">Death Prophet</span>
+	    </div> 
+	    <div id="hero_avatar_45" class="avatar" style="background: url(/dotalight/static/img/heroes/45_large.png)">
+	      <span class="avatar-text">Pugna</span>
+	    </div> 
+	    <div id="hero_avatar_50" class="avatar" style="background: url(/dotalight/static/img/heroes/50_large.png)">
+	      <span class="avatar-text">Dazzle</span>
+	    </div> 
+	    <div id="hero_avatar_52" class="avatar" style="background: url(/dotalight/static/img/heroes/52_large.png)">
+	      <span class="avatar-text">Leshrac</span>
+	    </div>
+	    <div id="hero_avatar_55" class="avatar" style="background: url(/dotalight/static/img/heroes/55_large.png)">
+	      <span class="avatar-text">Dark Seer</span>
+	    </div>
+
+	    <div id="hero_avatar_65" class="avatar" style="background: url(/dotalight/static/img/heroes/65_large.png)">
+	      <span class="avatar-text">Batrider</span>
+	    </div>
+	    <div id="hero_avatar_68" class="avatar" style="background: url(/dotalight/static/img/heroes/68_large.png)">
+	      <span class="avatar-text">Ancient Apparition</span>
+	    </div> 
+	    <div id="hero_avatar_74" class="avatar" style="background: url(/dotalight/static/img/heroes/74_large.png)">
+	      <span class="avatar-text">Invoker</span>
+	    </div> 
+	    <div id="hero_avatar_76" class="avatar" style="background: url(/dotalight/static/img/heroes/76_large.png)">
+	      <span class="avatar-text">Obsidian Destroyer</span>
+	    </div> 
+	    <div id="hero_avatar_79" class="avatar" style="background: url(/dotalight/static/img/heroes/79_large.png)">
+	      <span class="avatar-text">Shadow Demon</span>
+	    </div>
+	    <div id="hero_avatar_92" class="avatar" style="background: url(/dotalight/static/img/heroes/92_large.png)">
+	      <span class="avatar-text">Visage</span>
+	    </div>
+	  </div>
+	</div>
+      </div>
+    </div>
+    <script src="/dotalight/static/js/dashboard.js"></script>
   </body>
 <html>

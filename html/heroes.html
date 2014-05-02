@@ -9,14 +9,6 @@
     <title>DotaLight</title>
     <link href="/dotalight/static/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      html, body {
-        height: 100%;
-        background-color: #333;
-      }
-      body {
-        text-align: center;
-        text-shadow: 0 1px 3px rgba(0,0,0,.5);
-      }
       .avatar {
         display: table;
         float: left;
@@ -54,11 +46,13 @@
         font-family: "Courier New";
         font-size: 10pt;
       }
-      #hero-selector {
+      #hero_selector {
         width: 90%;
         margin-left: auto;
         margin-right: auto;
         position: relative;
+        text-align: center;
+        text-shadow: 0 1px 3px rgba(0,0,0,.5);
       }
       #strength_class {
         position: absolute;
@@ -101,7 +95,7 @@
       <button id="agility_filter" type="button" class="btn btn-default"><span class="btn-text-overview" id="btn_text_agi">AGI</span></button>
       <button id="intelligence_filter" type="button" class="btn btn-default"><span class="btn-text-overview" id="btn_text_int">INT</span></button>
     </div>
-    <div id="hero-selector">
+    <div id="hero_selector">
     <div id="strength_class" class="avatar-class">
     <div class="avatar-group">
     <div id="hero_avatar_7" class="avatar" style="background: url(/dotalight/static/img/heroes/7_large.png)">
@@ -407,7 +401,7 @@
       <span class="avatar-text">Warlock</span>
     </div> 
     <div id="hero_avatar_39" class="avatar" style="background: url(/dotalight/static/img/heroes/39_large.png)">
-      <span class="avatar-text">Queenofpain</span>
+      <span class="avatar-text">Queen Of Pain</span>
     </div> 
     <div id="hero_avatar_43" class="avatar" style="background: url(/dotalight/static/img/heroes/43_large.png)">
       <span class="avatar-text">Death Prophet</span>
@@ -448,7 +442,7 @@
     </div>
     <script>
       function adjust_selector() {
-        $('#hero-selector').css('width', Math.floor($(window).width() * 0.9 / 137) * 137);
+        $('#hero_selector').css('width', Math.floor($(window).width() * 0.9 / 137) * 137);
       }
       $(window).resize(adjust_selector);
       adjust_selector();
