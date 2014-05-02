@@ -4,8 +4,6 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
 
     <title>DotaLight</title>
 
@@ -24,26 +22,31 @@
           </div>
           <div class="logo-container"><img src="/dotalight/static/img/dota2_logo.png" alt="Dota 2 Logo" class="logo"></div>
           <div class="lead" id="input_box">
-            <form id="request" action="" method="post">
-              <input type="hidden" name="update" value="1">
-              <p><input id="input_user_name" type="text" class="input-bar" autocomplete="off" autofocus="autofocus" placeholder="Type In Steam Vanity URL"></p>
-              <p><button type="submit" class="btn btn-lg btn-default" value="submit">Update User Profile</button></p>
-            </form>
+            <p><input id="input_user_name" type="text" class="input-bar" autocomplete="off" autofocus="autofocus" placeholder="Type In Steam Vanity URL"></p>
+            <p><button id="btn_submit" class="btn btn-lg btn-default">Update User Profile</button></p>
           </div>
+        </div>
+        <div class="place-holder">
+          <img id="update_progress" src="/dotalight/static/img/in-progress.gif" class="progress-img">
+          <p id="server_response"></p>
         </div>
         <p class="disclaimer">Dota 2 match data analyzer. By DotaLight team. <br> Dota 2 is a registered trademark of Valve Corporation.</p>
       </div>
     </div>
     <script>
-      $('#request').submit(function(event) {
+      $('#btn_submit').click(function() {
         var vanity_url = $('#input_user_name').val();
         if (vanity_url.length === 0 ||
             vanity_url !== escape(vanity_url) ||
             vanity_url.indexOf('/') !== -1) {
-          alert("Invalid Steam Vanity URL!");
-          event.preventDefault();
+          alert('Invalid Steam Vanity URL!');
         } else {
-          $('#request').attr('action', '/dotalight/account_' + vanity_url);
+          $('#update_progress').css('display', 'inline');
+          $.post('', {update: '1', vanity_url: vanity_url})
+           .done(function(data) {
+            $('#update_progress').css('display', 'none');
+            $('#server_response').html(data);
+            });
         }
       });
     </script>

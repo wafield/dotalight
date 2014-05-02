@@ -17,6 +17,20 @@ def upgrade_tables():
     init_tables()
     return
 
+class Match(object):
+    def __init__(self, db_row):
+        self.start_time = datetime.datetime.fromtimestamp(db_row[2])
+        self.duration = db_row[5]
+        self.is_radiant = not (db_row[7] >> 7)
+        self.win = db_row[6] != (db_row[7] >> 7)
+        self.hero_id = db_row[8]
+        self.kills = db_row[9]
+        self.deaths = db_row[10]
+        self.assists = db_row[11]
+        self.lasthits = db_row[12]
+        self.denies = db_row[13]
+        self.level = db_row[18]
+
 def init_tables():
     conn = MySQLdb.connect(host=HOST, user=USER, db=DATABASE, charset='utf8')
     c = conn.cursor()
@@ -66,10 +80,10 @@ def get_player_summaries(steamids, db=None):
     c = conn.cursor()
     success = []
     for pid in steamids:
-        c.execute('SELECT * FROM players WHERE pid=%s', (pid))
+        c.execute('SELECT * FROM players WHERE steamid=%s', (pid))
         row = c.fetchone()
         if not row is None:
-            success.append(row[0])
+            success.append(row)
     c.close()
     if db is None:
         conn.close()
@@ -191,3 +205,23 @@ def insert_match(js, accountid, db=None):
         conn.close()
     return True
 
+def get_matches_for_player(steamid, heroid, db=None):
+    if db is None:
+        conn = connect_db()
+    else:
+        conn = db
+    c = conn.cursor()
+    accountid = webapi.id64to32(steamid)
+    sql = 'SELECT * FROM matches where accountid=%s'
+    param = (accountid,)
+    if heroid:
+        sql = sql + ' and heroid=%s'
+        param = param + (heroid,)
+    c.execute(sql, param)
+    ret = c.fetchall()
+    c.close()
+    if db is None:
+        conn.close()
+    return map(lambda row: Match(row), ret)
+    
+    

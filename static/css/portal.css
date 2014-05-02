@@ -29,6 +29,29 @@ a:hover {
   width: 60%
 }
 
+.place-holder {
+  min-height: 50px;
+  height: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  margin: 10px;
+}
+
+.progress-img {
+  height: 50px;
+  display: none;
+}
+
+#server_response {
+  font-size: 15pt;
+  font-family: arial;
+  color: #f00;
+}
+
+#server_response a {
+  text-decoration: underline;
+}
+
 html,
 body {
   height: 100%;

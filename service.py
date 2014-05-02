@@ -1,19 +1,21 @@
 import database
 import webapi
 import json
-import time
+import html
+
+CSET = 'utf8'
 
 def update_player_profile(vanityurl):
     db = database.connect_db()
     response = json.loads(webapi.get_player_steamid(vanityurl))['response']
     if response['success'] != 1:
-        return False
+        return (False,)
     steamid = int(response['steamid'])
 
     if not database.is_player_recorded(steamid, db):
         js = webapi.get_player_summaries([steamid])
         if not database.insert_player_summaries(js, db):
-            return False
+            return (False,)
 
     accountid = webapi.id64to32(steamid)
     first_request = 25
@@ -22,16 +24,16 @@ def update_player_profile(vanityurl):
                                     matches_requested=first_request)
     minfo = json.loads(js)['result']
     if minfo['status'] != 1:
-        return False
+        return (False,)
     n_total = minfo['total_results']
     n_return = minfo['num_results']
 
     n = n_total - n_stored
 
     if n < 0:
-        return False
+        return (False,)
     elif n == 0:
-        return True
+        return (True, steamid)
 
     if n <= n_return:
         matches = minfo['matches'][:n]
@@ -43,7 +45,7 @@ def update_player_profile(vanityurl):
         js = webapi.get_match_details(matchid)
         success = database.insert_match(js, accountid, db)
         if not success:
-            return False
+            return (False,)
 
     n = n - n_return
     last_match_id = matches[-1]['match_id']
@@ -55,16 +57,29 @@ def update_player_profile(vanityurl):
                                         matches_requested=matches_requested+1)
         minfo = json.loads(js)['result']
         if minfo['status'] != 1:
-            return False
+            return (False,)
         matches = minfo['matches'][1:]
         for match in matches:
             matchid = match['match_id']
             js = webapi.get_match_details(matchid)
             success = database.insert_match(js, accountid, db)
             if not success:
-                return False
-            time.sleep(1)
+                return (False,)
         n = n - matches_requested
         last_match_id = matches[-1]['match_id']
     db.close()
-    pass
+    return (True, steamid);
+
+def show_dashboard(steamid):
+    pp = database.get_player_summaries([steamid])
+    if len(pp) == 0:
+        error_msg = "Player with steamid %d deos no exist!" % (steamid)
+        return html.HTML['error'].render(error_msg=error_msg).encode(CSET)
+    pp = pp[0]
+    pname = pp[1].encode(CSET)
+    pavatar = pp[2]
+    matches = database.get_matches_for_player(steamid, 0)
+    matches.sort(key=lambda m: m.start_time, reverse=True)
+    return html.HTML['dashboard'].render(player_name=pname, 
+                                         player_avatar=pavatar,
+                                         matches=matches).encode(CSET)

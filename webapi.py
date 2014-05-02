@@ -78,4 +78,5 @@ def get_heroes():
     return json
 
 def id64to32(steamid):
-    return steamid - 76561197960265728
+    # return steamid - 76561197960265728L
+    return steamid & 0xffffffff

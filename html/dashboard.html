@@ -6,16 +6,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>{{ account }}</title>
+    <title>DotaLight - {{ player_name }}</title>
     <link href="/dotalight/static/css/bootstrap.min.css" rel="stylesheet">
     <link href="/dotalight/static/css/bootstrap-theme.min.css">
     <script src="/dotalight/static/js/jquery.min.js"></script>
     <script src="/dotalight/static/js/bootstrap.min.js"></script>
-    <script>
-      
-    </script>
+    <style>
+      body {
+        #background-color: #555;
+        #color: #fff;
+        padding-top: 70px;
+        padding-bottom: 30px;
+        font-size: 15pt;
+      }
+      .theme-dropdown .dropdown-menu {
+        position: static;
+        display: block;
+        margin-bottom: 20px;
+      }
+      .theme-showcase > p > .btn {
+        margin: 5px 0;
+      }
+      .navbar-avatar {
+        position: relative;
+        top: -6px;
+        height: 32px;
+        width: 32px;
+        vertical-align: middle;
+      }
+      .navbar-player {
+        position: relative;
+        top: -5px;
+        vertical-align: middle;
+      }
+      .tb-result-win {
+        color: #0f0;
+      }
+      .tb-result-lose {
+        color: #f00;
+      }
+      .match-table thead,tfoot {
+        color: #000;
+      }
+    </style>
   </head>
-  <body>
+  <body role="document">
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
@@ -25,7 +60,10 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <div class="navbar-brand" id="dash_brand">Match Overview</div>
+          <div class="navbar-brand" id="dash_brand">
+	    <img class="navbar-avatar" src="{{ player_avatar }}">
+	    <span class="navbar-player">{{ player_name }}</span>
+	  </div>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
@@ -49,6 +87,47 @@
         </div>
       </div>
     </div>
-    
+    <div class="container" role="main">
+      {% if matches|length == 0 %}
+      No Matches Recorded for This Player!
+      {% else %}
+      <table class="match-table table">
+	<thead>
+	  <th>Hero</th>
+	  <th>Level</th>
+	  <th>Date</th>
+	  <th>Result</th>
+	  <th>K/D/A</th>
+	  <th>LH/D</th>
+	  <th>Duration</th>
+	</thead>
+      {% for match in matches %}
+        <tr>
+          <td class="tb-avatar">{{ match.hero_id }}</td>
+	  <td class="tb-level">{{ match.level }}</td>
+          <td class="tb-date">{{ match.start_time.strftime('%Y-%m-%d') }}</td>
+	  {% if match.win %}
+	  <td class="tb-result-win">Win</td>
+	  {% else %}
+	  <td class="tb-result-lose">Lose</td>
+	  {% endif %}
+          
+          <td class="tb-kda">{{ match.kills }}/{{ match.deaths }}/{{ match.assists }}</td>
+          <td class="tb-lhd">{{ match.lasthits }}/{{ match.denies }}</td>
+          <td class="tb-dur">{{ match.duration // 60 }}:{{ match.duration % 60 }}</td>
+        </tr>
+      {% endfor %}
+	<tfoot>
+	  <th>Hero</th>
+	  <th>Level</th>
+	  <th>Date</th>
+	  <th>Result</th>
+	  <th>K/D/A</th>
+	  <th>LH/D</th>
+	  <th>Duration</th>
+	</tfoot>
+      </table>
+      {% endif %}
+    </div>
   </body>
 <html>
