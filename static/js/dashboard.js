@@ -128,7 +128,7 @@ $('#strength_filter').trigger('click');
 
 $('.avatar').each(function(index) {
     $(this).click(function() {
-	alert($(this).attr('id'));
+	$('#hero_indicator').html(heroes[parseInt($(this).attr('id').substring(12))]);
         $('#toggle_selector').css('display', 'none');
         $('.steady').css('opacity', 1);
     });
@@ -136,7 +136,9 @@ $('.avatar').each(function(index) {
     $(this).mouseup(function() {$(this).css('border-color', '#333');});
     $(this).mouseleave(function() {$(this).css('border-color', '#333');});
 });
-
+$('#select_all_heroes').click(function () {
+    $('#hero_indicator').html("All Heroes");
+});
 $('#select_hero').click(function () {
     $('#toggle_selector').css('display', 'block');
     $('.steady').css('opacity', 0.1);
