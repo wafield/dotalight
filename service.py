@@ -70,7 +70,7 @@ def update_player_profile(vanityurl):
     db.close()
     return (True, steamid);
 
-def show_dashboard(steamid):
+def render_dashboard(steamid, heroid=0, ajax=False):
     pp = database.get_player_summaries([steamid])
     if len(pp) == 0:
         error_msg = "Player with steamid %d deos no exist!" % (steamid)
@@ -78,8 +78,11 @@ def show_dashboard(steamid):
     pp = pp[0]
     pname = pp[1].encode(CSET)
     pavatar = pp[2]
-    matches = database.get_matches_for_player(steamid, 0)
+    matches = database.get_matches_for_player(steamid, heroid)
     matches.sort(key=lambda m: m.start_time, reverse=True)
-    return html.HTML['dashboard'].render(player_name=pname, 
+    match_table = html.HTML['match_table'].render(matches=matches).encode(CSET)
+    if ajax:
+        return match_table
+    return html.HTML['dashboard'].render(player_name=pname,
                                          player_avatar=pavatar,
-                                         matches=matches).encode(CSET)
+                                         match_table=match_table).encode(CSET)

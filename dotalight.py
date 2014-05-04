@@ -53,9 +53,14 @@ def application(environ, start_response):
             content_type = 'text/html'
             output = html.HTML['portal']
     elif url_path.find('/') == -1 and url_path.isdigit():
-        content_type = 'text/html'
         steamid = int(url_path)
-        output = service.show_dashboard(steamid)
+        if post_data.get('ajax', ['0'])[0] == '1':
+            content_type = 'text/plaintext'
+            heroid = int(post_data.get('heroid', ['0'])[0])
+            output = service.render_dashboard(steamid, heroid, True)
+        else:
+            content_type = 'text/html'
+            output = service.render_dashboard(steamid)
     else:
         output = 'Unkown Request!'
         content_type = 'text/plaintext'

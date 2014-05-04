@@ -1,0 +1,40 @@
+	{% if matches|length == 0 %}
+	No Matches Recorded for This Player!
+	{% else %}
+	<table class="match-table table">
+	  <thead>
+	    <th>Hero</th>
+	    <th>Level</th>
+	    <th>Date</th>
+	    <th>Result</th>
+	    <th>K/D/A</th>
+	    <th>LH/D</th>
+	    <th>Duration</th>
+	  </thead>
+	  {% for match in matches %}
+          <tr>
+            <td class="tb-avatar"><img src="/dotalight/static/img/heroes/{{ match.hero_id }}_small.png"></td>
+	    <td class="tb-level">{{ match.level }}</td>
+            <td class="tb-date">{{ match.start_time.strftime('%Y-%m-%d') }}</td>
+	    {% if match.win %}
+	    <td class="tb-result-win">Win</td>
+	    {% else %}
+	    <td class="tb-result-lose">Lose</td>
+	    {% endif %}
+            
+            <td class="tb-kda">{{ match.kills }}/{{ match.deaths }}/{{ match.assists }}</td>
+            <td class="tb-lhd">{{ match.lasthits }}/{{ match.denies }}</td>
+            <td class="tb-dur">{{ match.duration // 60 }}:{{ match.duration % 60 }}</td>
+          </tr>
+	  {% endfor %}
+	  <tfoot>
+	    <th>Hero</th>
+	    <th>Level</th>
+	    <th>Date</th>
+	    <th>Result</th>
+	    <th>K/D/A</th>
+	    <th>LH/D</th>
+	    <th>Duration</th>
+	  </tfoot>
+	</table>
+	{% endif %}

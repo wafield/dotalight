@@ -215,7 +215,7 @@ def get_matches_for_player(steamid, heroid, db=None):
     sql = 'SELECT * FROM matches where accountid=%s'
     param = (accountid,)
     if heroid:
-        sql = sql + ' and heroid=%s'
+        sql = sql + ' and hero_id=%s'
         param = param + (heroid,)
     c.execute(sql, param)
     ret = c.fetchall()

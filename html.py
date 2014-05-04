@@ -12,6 +12,7 @@ HTML = {}
 
 HTML['portal'] = 'portal.html'
 HTML['dashboard'] = 'dashboard.html'
+HTML['match_table'] = 'match_table.html'
 HTML['error'] = 'error.html'
 
 # Register asset before this line
@@ -25,4 +26,6 @@ for key, value in HTML.items():
 # =============================================
 # If the asset is a template, construct it here
 HTML['dashboard'] = jinja2.Template(HTML['dashboard'])
+HTML['match_table'] = jinja2.Template(HTML['match_table'])
 HTML['error'] = jinja2.Template(HTML['error'])
+

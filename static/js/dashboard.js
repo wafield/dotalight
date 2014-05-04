@@ -128,9 +128,14 @@ $('#strength_filter').trigger('click');
 
 $('.avatar').each(function(index) {
     $(this).click(function() {
-	$('#hero_indicator').html(heroes[parseInt($(this).attr('id').substring(12))]);
+	var heroid = $(this).attr('id').substring(12);
+	$('#hero_indicator').html(heroes[parseInt(heroid)]);
         $('#toggle_selector').css('display', 'none');
         $('.steady').css('opacity', 1);
+	$.post('', {ajax: '1', heroid: heroid})
+	 .done(function(data) {
+	     $('#match_data_div').html(data);
+	 });
     });
     $(this).mousedown(function() {$(this).css('border-color', '#0f0');});
     $(this).mouseup(function() {$(this).css('border-color', '#333');});
@@ -138,6 +143,10 @@ $('.avatar').each(function(index) {
 });
 $('#select_all_heroes').click(function () {
     $('#hero_indicator').html("All Heroes");
+    $.post('', {ajax: '1'})
+     .done(function(data) {
+	 $('#match_data_div').html(data);
+     });
 });
 $('#select_hero').click(function () {
     $('#toggle_selector').css('display', 'block');
