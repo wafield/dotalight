@@ -132,10 +132,12 @@ $('.avatar').each(function(index) {
 	$('#hero_indicator').html(heroes[parseInt(heroid)]);
         $('#toggle_selector').css('display', 'none');
         $('.steady').css('opacity', 1);
+	$('#match_data_div').html('<div style="text-align:center"><img src="/dotalight/static/img/in-progress.gif" class="progress-img"><br>Loading...</div>');
 	$.post('', {ajax: '1', heroid: heroid})
 	 .done(function(data) {
 	     $('#match_data_div').html(data);
 	 });
+
     });
     $(this).mousedown(function() {$(this).css('border-color', '#0f0');});
     $(this).mouseup(function() {$(this).css('border-color', '#333');});
@@ -143,6 +145,7 @@ $('.avatar').each(function(index) {
 });
 $('#select_all_heroes').click(function () {
     $('#hero_indicator').html("All Heroes");
+    $('#match_data_div').html('<div style="text-align:center"><img src="/dotalight/static/img/in-progress.gif" class="progress-img"><br>Loading...</div>');
     $.post('', {ajax: '1'})
      .done(function(data) {
 	 $('#match_data_div').html(data);

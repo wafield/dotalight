@@ -84,13 +84,15 @@ body {
     z-index: 10;
     display: none;
     width: 100%;
+    height: 80%;
+    overflow-y: scroll;
+    overflow-x: hidden;
     text-align: center;
     text-shadow: 0 1px 3px rgba(0,0,0,.5);
     margin-left: auto;
     margin-right: auto;
 }
 #hero_selector {
-    height: 100%;
     width: 100%;
     left: 50%;
     margin-left: auto;
@@ -126,4 +128,8 @@ body {
 }
 #btn_text_int {
     background-image: url(/dotalight/static/img/overviewicon_int.png)
+}
+
+.progress-img {
+  height: 100px;
 }
