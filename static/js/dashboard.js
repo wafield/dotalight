@@ -128,16 +128,16 @@ $('#strength_filter').trigger('click');
 
 $('.avatar').each(function(index) {
     $(this).click(function() {
-	var heroid = $(this).attr('id').substring(12);
-	$('#hero_indicator').html(heroes[parseInt(heroid)]);
+	    var heroid = $(this).attr('id').substring(12);
+	    $('#hero_indicator').html(heroes[parseInt(heroid)]);
         $('#toggle_selector').css('display', 'none');
         $('.steady').css('opacity', 1);
-	$('#match_data_div').html('<div style="text-align:center"><img src="/dotalight/static/img/in-progress.gif" class="progress-img"><br>Loading...</div>');
-	$.post('', {service: service, heroid: heroid})
-	 .done(function(data) {
-	     $('#match_data_div').html(data);
-	 });
-
+        $('#match_data_div').html('<div style="text-align:center"><img src="/dotalight/static/img/in-progress.gif" class="progress-img"><br>Loading...</div>');
+        $('.navbar-collapse').collapse('hide');
+        $.post('', {service: service, heroid: heroid})
+         .done(function(data) {
+	         $('#match_data_div').html(data);
+        });
     });
     $(this).mousedown(function() {$(this).css('border-color', '#0f0');});
     $(this).mouseup(function() {$(this).css('border-color', '#333');});
@@ -146,10 +146,11 @@ $('.avatar').each(function(index) {
 $('#select_all_heroes').click(function () {
     $('#hero_indicator').html("All Heroes");
     $('#match_data_div').html('<div style="text-align:center"><img src="/dotalight/static/img/in-progress.gif" class="progress-img"><br>Loading...</div>');
+    $('.navbar-collapse').collapse('hide');
     $.post('', {service: service})
      .done(function(data) {
-	 $('#match_data_div').html(data);
-     });
+	     $('#match_data_div').html(data);
+    });
 });
 $('#select_hero').click(function () {
     $('#toggle_selector').css('display', 'block');
@@ -162,19 +163,22 @@ $('#view_matches').click(function () {
     $('.dropdown-trend-item').removeClass('active');
     $('#hero_indicator').html('All Heroes');
     $('#match_data_div').html('<div style="text-align:center"><img src="/dotalight/static/img/in-progress.gif" class="progress-img"><br>Loading...</div>');
+    $('.navbar-collapse').collapse('hide');
     $.post('', {service: service})
      .done(function(data) {
-	 $('#match_data_div').html(data);
-     });
+	     $('#match_data_div').html(data);
+    });
 });
 function activate_trend() {
     $('#view_matches_li').removeClass('active');
     $('#view_trend_li').addClass('active');
     $('.dropdown-trend-item').removeClass('active');
+    $('#match_data_div').html('<div style="text-align:center"><img src="/dotalight/static/img/in-progress.gif" class="progress-img"><br>Loading...</div>');
+    $('.navbar-collapse').collapse('hide');
     $.post('', {service: service})
      .done(function(data) {
 	 $('#match_data_div').html(data);
-     });
+    });
 }
 $('#view_trend_kda').click(function () {
     service = 2;
