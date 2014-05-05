@@ -13,9 +13,8 @@ HTML = {}
 HTML['portal'] = 'portal.html'
 HTML['dashboard'] = 'dashboard.html'
 HTML['match_table'] = 'match_table.html'
+HTML['match_chart'] = 'match_chart.html'
 HTML['error'] = 'error.html'
-HTML['highchart1'] = 'highcharts1.html'
-HTML['highchart2'] = 'highcharts2.html'
 
 # Register asset before this line
 # ===============================
@@ -29,6 +28,5 @@ for key, value in HTML.items():
 # If the asset is a template, construct it here
 HTML['dashboard'] = jinja2.Template(HTML['dashboard'])
 HTML['match_table'] = jinja2.Template(HTML['match_table'])
+HTML['match_chart'] = jinja2.Template(HTML['match_chart'])
 HTML['error'] = jinja2.Template(HTML['error'])
-HTML['highchart1'] = jinja2.Template(HTML['highchart1'])
-HTML['highchart2'] = jinja2.Template(HTML['highchart2'])

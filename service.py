@@ -71,96 +71,39 @@ def update_player_profile(vanityurl):
     db.close()
     return (True, steamid);
 
-def render_dashboard(steamid, heroid=0, ajax=False):
-    pp = database.get_player_summaries([steamid])
-    if len(pp) == 0:
-        error_msg = "Player with steamid %d deos no exist!" % (steamid)
-        return html.HTML['error'].render(error_msg=error_msg).encode(CSET)
-    pp = pp[0]
-    pname = pp[1].encode(CSET)
-    pavatar = pp[2]
-    matches = database.get_matches_for_player(steamid, heroid)
-    matches.sort(key=lambda m: m.start_time, reverse=True)
-    match_table = html.HTML['match_table'].render(matches=matches).encode(CSET)
-    if ajax:
-        return match_table
-    return html.HTML['dashboard'].render(player_name=pname,
-                                         player_avatar=pavatar,
-                                         match_table=match_table).encode(CSET)
-
-def trend(steamid, trendid):
-    if trendid == "trend1":
-        return query_player(steamid, ["kills", "deaths", "assists"])
-    elif trendid == "trend2":
-        return query_player(steamid, ["lasthits", "denies"])
+def render_dashboard(steamid, service=0, heroid=0):
+    if service == 0 or service == 1:
+        pp = database.get_player_summaries([steamid])
+        if len(pp) == 0:
+            error_msg = 'Player with steamid %d deos no exist!' % (steamid)
+            return html.HTML['error'].render(error_msg=error_msg).encode(CSET)
+        pp = pp[0]
+        pname = pp[1].encode(CSET)
+        pavatar = pp[2]
+        matches = database.get_matches_for_player(steamid, heroid)
+        match_table = html.HTML['match_table'].render(matches=matches).encode(CSET)
+        if service == 1:
+            return match_table
+        else:
+            return html.HTML['dashboard'].render(player_name=pname,
+                                                 player_avatar=pavatar,
+                                                 match_table=match_table).encode(CSET)
+    elif service == 2:
+        items = [('kills', 'Kills'), ('deaths', 'Deaths'), ('assists', 'Assists')] 
+        return render_chart(steamid, heroid, items, 'Kills/Deaths/Assists')
+    elif service == 3:
+        items = [('lasthits', 'Last Hits'), ('denies', 'Denies')]
+        return render_chart(steamid, heroid, items, 'Last Hits/Denies')
+    elif service == 4:
+        items = [('glod_pm', 'Gold Per Min'), ('xp_pm', 'Exp Per Min')]
+        return render_chart(steamid, heroid, items, 'Gold/Experience Per Minute')
     else:
-        return query_player(steamid, ["glod_pm", "level"])
+        error_msg = "Bad request!"
+        return html.HTML['error'].render(error_msg=error_msg).encode(CSET)
 
-
-def query_player(steamid, attrs):
-    matches = database.get_matches_for_player(steamid, 0)
-    matches.sort(key=lambda m: m.start_time, reverse=True)
+def render_chart(steamid, heroid, items, title):
+    matches = database.get_matches_for_player(steamid, heroid)
     if len(matches) >= 10:
         matches = matches[:10] #get last ten games
     matches.reverse()
-
-    records = {}
-    def help(a):
-        records[a] = []
-    map(help, attrs)
-
-    def helper(m):
-        map(lambda a: records[a].append(str(getattr(m,a))), attrs)
-    map(helper, matches)
-
-    return highchart_generator(records)
-
-highchart_func = '''
-    $(function () {
-        $('#container').highcharts({
-            title: {
-                text: 'Dotalight Recent Trend Infomation',
-                x: -20 //center
-            },
-            subtitle: {
-                text: 'Source: api.steampowered.com',
-                x: -20
-            },
-            xAxis: {
-                 title: {
-                    text: 'recent ten games'
-                },
-                categories: ['1', '2', '3', '4', '5', '6',
-                    '7', '8', '9', '10']
-            },
-            yAxis: {
-                title: {
-                    text: 'number'
-                },
-                plotLines: [{
-                    value: 0,
-                    width: 1,
-                }]
-            },
-            tooltip: {
-                valueSuffix: ''
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle',
-                borderWidth: 0
-            },
-'''
-
-def highchart_generator(matches):
-    s = "series: ["
-
-    for key, value in matches.items():
-        s += "{\nname: \'" + key + "\',\ndata: [" + ", ".join(value)+"]\n},"
-
-    s = s[:-1] + "]"
-
-    rev = highchart_func + s + "});\n});"
-
-    return rev
+    return html.HTML['match_chart'].render(matches=matches, items=items, title=title).encode(CSET)

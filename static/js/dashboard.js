@@ -106,7 +106,7 @@ heroes[106] = "Ember Spirit";
 heroes[107] = "Earth Spirit";
 heroes[109] = "Terrorblade";
 heroes[110] = "Phoenix";
-
+var service = '1';
 function adjust_selector() {
     $('#hero_selector').css('width', Math.floor($(window).width() * 0.9 / 137) * 137);
 }
@@ -133,7 +133,7 @@ $('.avatar').each(function(index) {
         $('#toggle_selector').css('display', 'none');
         $('.steady').css('opacity', 1);
 	$('#match_data_div').html('<div style="text-align:center"><img src="/dotalight/static/img/in-progress.gif" class="progress-img"><br>Loading...</div>');
-	$.post('', {ajax: '1', heroid: heroid})
+	$.post('', {service: service, heroid: heroid})
 	 .done(function(data) {
 	     $('#match_data_div').html(data);
 	 });
@@ -146,7 +146,7 @@ $('.avatar').each(function(index) {
 $('#select_all_heroes').click(function () {
     $('#hero_indicator').html("All Heroes");
     $('#match_data_div').html('<div style="text-align:center"><img src="/dotalight/static/img/in-progress.gif" class="progress-img"><br>Loading...</div>');
-    $.post('', {ajax: '1'})
+    $.post('', {service: service})
      .done(function(data) {
 	 $('#match_data_div').html(data);
      });
@@ -155,52 +155,39 @@ $('#select_hero').click(function () {
     $('#toggle_selector').css('display', 'block');
     $('.steady').css('opacity', 0.1);
 });
-$('#trend1').click(function () {
-    var cur_url = location.href;
-    if (cur_url.substring(cur_url.length-1)=='#'){
-        cur_url = cur_url.substring(0, cur_url.length-1);
-    }
-    var items = cur_url.split('/');
-    if (isNaN(items[items.length-1])) { // last trend
-        var res = items.slice(0, items.length-1);
-    }
-    else{
-        var res = items;
-    }
-
-    var url = res.join("/");
-    window.location.replace(url+"/trend1");
+$('#view_matches').click(function () {
+    service = 1;
+    $('#view_matches_li').addClass('active');
+    $('#view_trend_li').removeClass('active');
+    $('.dropdown-trend-item').removeClass('active');
+    $('#hero_indicator').html('All Heroes');
+    $('#match_data_div').html('<div style="text-align:center"><img src="/dotalight/static/img/in-progress.gif" class="progress-img"><br>Loading...</div>');
+    $.post('', {service: service})
+     .done(function(data) {
+	 $('#match_data_div').html(data);
+     });
 });
-$('#trend2').click(function () {
-    var cur_url = location.href;
-    if (cur_url.substring(cur_url.length-1)=='#'){
-        cur_url = cur_url.substring(0, cur_url.length-1);
-    }
-    var items = cur_url.split('/');
-    if (isNaN(items[items.length-1])) { // last trend
-        var res = items.slice(0, items.length-1);
-    }
-    else{
-        var res = items;
-    }
-
-    var url = res.join("/");
-    window.location.replace(url+"/trend2");
+function activate_trend() {
+    $('#view_matches_li').removeClass('active');
+    $('#view_trend_li').addClass('active');
+    $('.dropdown-trend-item').removeClass('active');
+    $.post('', {service: service})
+     .done(function(data) {
+	 $('#match_data_div').html(data);
+     });
+}
+$('#view_trend_kda').click(function () {
+    service = 2;
+    activate_trend();
+    $('#view_trend_kda_li').addClass('active');
 });
-$('#trend3').click(function () {
-    var cur_url = location.href;
-    if (cur_url.substring(cur_url.length-1)=='#'){
-        cur_url = cur_url.substring(0, cur_url.length-1);
-    }
-    var items = cur_url.split('/');
-    if (isNaN(items[items.length-1])) { // last trend
-        var res = items.slice(0, items.length-1);
-    }
-    else{
-        var res = items;
-    }
-
-    var url = res.join("/");
-    window.location.replace(url+"/trend3");
+$('#view_trend_lhd').click(function () {
+    service = 3;
+    activate_trend();
+    $('#view_trend_lhd_li').addClass('active');
 });
-
+$('#view_trend_ge').click(function () {
+    service = 4;
+    activate_trend();
+    $('#view_trend_ge_li').addClass('active');
+});

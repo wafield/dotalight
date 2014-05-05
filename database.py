@@ -30,6 +30,8 @@ class Match(object):
         self.lasthits = db_row[12]
         self.denies = db_row[13]
         self.glod = db_row[14]
+        self.glod_pm = db_row[15]
+        self.xp_pm = db_row[16]
         self.level = db_row[18]
 
 def init_tables():
@@ -218,6 +220,7 @@ def get_matches_for_player(steamid, heroid, db=None):
     if heroid:
         sql = sql + ' and hero_id=%s'
         param = param + (heroid,)
+    sql = sql + ' ORDER BY start_time DESC'
     c.execute(sql, param)
     ret = c.fetchall()
     c.close()

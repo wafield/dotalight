@@ -54,21 +54,10 @@ def application(environ, start_response):
             output = html.HTML['portal']
     elif url_path.find('/') == -1 and url_path.isdigit():
         steamid = int(url_path)
-        if post_data.get('ajax', ['0'])[0] == '1':
-            content_type = 'text/plaintext'
-            heroid = int(post_data.get('heroid', ['0'])[0])
-            output = service.render_dashboard(steamid, heroid, True)
-        else:
-            content_type = 'text/html'
-            output = service.render_dashboard(steamid)
-    elif url_path.find('/') != -1:
-        items = url_path.split('/')
-        if len(items) == 2:
-            steamid = url_path.split('/')[0]
-            trendid = url_path.split('/')[1]
-            output = service.trend(int(steamid), trendid)
-            content_type = 'text/html'
-            output = output.encode('ascii', 'ignore')
+        service_no = int(post_data.get('service', ['0'])[0])
+        heroid = int(post_data.get('heroid', ['0'])[0])
+        content_type = 'text/html'
+        output = service.render_dashboard(steamid, service_no, heroid)
     else:
         output = 'Unkown Request!'
         content_type = 'text/plaintext'

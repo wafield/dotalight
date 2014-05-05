@@ -1,0 +1,43 @@
+<script id="chart_script" type="text/javascript">
+    $('#chart_script').parent().highcharts({
+        title: {
+            text: '{{ title }}',
+            x: -20
+        },
+        xAxis: {
+             title: {
+                text: 'Recent {{ matches|length }} games'
+            },
+            categories: [
+            {% for n in range(1, matches|length + 1) %}'{{ n }}',{% endfor %}
+            ]
+        },
+        yAxis: {
+            title: {
+                text: 'number'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+            }]
+        },
+        tooltip: {
+            valueSuffix: ''
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: [
+        {% for item in items %}
+            { name: '{{ item[1] }}',
+              data: [
+              {% for match in matches %}{{ match|attr(item[0]) }}, {% endfor %}
+              ]
+            },
+        {% endfor %}
+        ]
+    });
+</script>
