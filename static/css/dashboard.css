@@ -1,9 +1,9 @@
 body {
-    background-color: #555;
-    color: #fff;
     padding-top: 70px;
     padding-bottom: 30px;
     font-size: 15pt;
+    color: #000;
+    background-color: #666;
 }
 .theme-dropdown .dropdown-menu {
     position: static;
@@ -34,9 +34,6 @@ body {
 .tb-avatar img {
     width: 59px;
     height: 33px;
-}
-.match-table thead,tfoot {
-    color: #000;
 }
 .match-table {
     font-size: 12pt;
@@ -128,10 +125,6 @@ body {
 }
 #btn_text_int {
     background-image: url(/dotalight/static/img/overviewicon_int.png)
-}
-#container {
-    background-color: #555;
-    color: #fff;
 }
 .progress-img {
   height: 100px;
