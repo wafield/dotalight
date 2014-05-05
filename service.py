@@ -123,7 +123,7 @@ highchart_func = '''
                 x: -20 //center
             },
             subtitle: {
-                text: 'Source: Dotabuff.com',
+                text: 'Source: api.steampowered.com',
                 x: -20
             },
             xAxis: {
@@ -160,8 +160,6 @@ def highchart_generator(matches):
         s += "{\nname: \'" + key + "\',\ndata: [" + ", ".join(value)+"]\n},"
 
     s = s[:-1] + "]"
-
-    print s
 
     rev = highchart_func + s + "});\n});"
 
