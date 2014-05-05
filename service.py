@@ -90,102 +90,79 @@ def render_dashboard(steamid, heroid=0, ajax=False):
 
 def trend(steamid, trendid):
     if trendid == "trend1":
-        return query_player_1(steamid)
+        return query_player(steamid, ["kills", "deaths", "assists"])
     elif trendid == "trend2":
-        return query_player_2(steamid)
+        return query_player(steamid, ["lasthits", "denies"])
     else:
-        return query_player_3(steamid)
+        return query_player(steamid, ["glod_pm", "level"])
 
 
-def highchart_generator_1(matches):
-    template = html.HTML['highchart1']
-
-    templateVars = {"title" : "matches",
-                 "description" : "recent ten games information",
-                 "name1": '''\'kills\'''',
-                 "data1" : matches["kill"],
-                 "name2": "\'deaths\'",
-                 "data2" : matches["deaths"],
-                 "name3": "\'assists\'",
-                 "data3" : matches["assists"],
-               }
-
-    outputText = template.render(templateVars)
-
-    return outputText
-
-def highchart_generator_2(matches):
-    template = html.HTML['highchart2']
-
-    templateVars = {"title" : "matches",
-                 "description" : "recent ten games information",
-                 "name1": '''\'last hit\'''',
-                 "data1" : matches["last_hit"],
-                 "name2": "\'deny\'",
-                 "data2" : matches["deny"],
-               }
-
-    outputText = template.render(templateVars)
-
-    return outputText
-
-def highchart_generator_3(matches):
-    template = html.HTML['highchart2']
-
-    templateVars = {"title" : "matches",
-                 "description" : "recent ten games information",
-                 "name1": '''\'glod\'''',
-                 "data1" : matches["glod"],
-                 "name2": "\'experience\'",
-                 "data2" : matches["exp"],
-               }
-
-    outputText = template.render(templateVars)
-
-    return outputText
-
-def query_player_1(steamid):
+def query_player(steamid, attrs):
     matches = database.get_matches_for_player(steamid, 0)
     matches.sort(key=lambda m: m.start_time, reverse=True)
-    matches = matches[:10] #get last ten games
+    if len(matches) >= 10:
+        matches = matches[:10] #get last ten games
     matches.reverse()
-    records = {"kill":[], "deaths":[], "assists":[]}
+
+    records = {}
+    def help(a):
+        records[a] = []
+    map(help, attrs)
 
     def helper(m):
-        records["kill"].append(m.kills)
-        records["deaths"].append(m.deaths)
-        records["assists"].append(m.assists)
-    if matches:
-        map(helper, matches)
+        map(lambda a: records[a].append(str(getattr(m,a))), attrs)
+    map(helper, matches)
 
-    return highchart_generator_1(records)
+    return highchart_generator(records)
 
-def query_player_2(steamid):
-    matches = database.get_matches_for_player(steamid, 0)
-    matches.sort(key=lambda m: m.start_time, reverse=True)
-    matches = matches[:10] #get last ten games
-    matches.reverse()
-    records = {"last_hit":[], "deny":[]}
+highchart_func = '''
+    $(function () {
+        $('#container').highcharts({
+            title: {
+                text: 'Dotalight Recent Trend Infomation',
+                x: -20 //center
+            },
+            subtitle: {
+                text: 'Source: Dotabuff.com',
+                x: -20
+            },
+            xAxis: {
+                 title: {
+                    text: 'recent ten games'
+                },
+                categories: ['1', '2', '3', '4', '5', '6',
+                    '7', '8', '9', '10']
+            },
+            yAxis: {
+                title: {
+                    text: 'number'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                }]
+            },
+            tooltip: {
+                valueSuffix: ''
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                borderWidth: 0
+            },
+'''
 
-    def helper(m):
-        records["last_hit"].append(m.lasthits)
-        records["deny"].append(m.denies)
-    if matches:
-        map(helper, matches)
+def highchart_generator(matches):
+    s = "series: ["
 
-    return highchart_generator_2(records)
+    for key, value in matches.items():
+        s += "{\nname: \'" + key + "\',\ndata: [" + ", ".join(value)+"]\n},"
 
-def query_player_3(steamid):
-    matches = database.get_matches_for_player(steamid, 0)
-    matches.sort(key=lambda m: m.start_time, reverse=True)
-    matches = matches[:10] #get last ten games
-    matches.reverse()
-    records = {"glod":[], "exp":[]}
+    s = s[:-1] + "]"
 
-    def helper(m):
-        records["glod"].append(int(m.glod))
-        records["exp"].append(m.level)
-    if matches:
-        map(helper, matches)
+    print s
 
-    return highchart_generator_3(records)
+    rev = highchart_func + s + "});\n});"
+
+    return rev
