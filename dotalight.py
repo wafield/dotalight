@@ -15,7 +15,7 @@ import service
 def application(environ, start_response):
     # Reload html page everytime. This is good for debugging.
     reload(html)
-    
+
     method = environ['REQUEST_METHOD'].upper()
     post_data = {}
     get_data = {}
@@ -33,9 +33,9 @@ def application(environ, start_response):
     elif method == 'GET':
         get_data = cgi.parse_qs(environ['QUERY_STRING'])
     else:
-        # This branch should be unreachable 
+        # This branch should be unreachable
         pass
-    
+
     status = '200 OK'
 
     url_path = environ['PATH_INFO'][1:]  # The trailing part of the requested URL
@@ -61,6 +61,14 @@ def application(environ, start_response):
         else:
             content_type = 'text/html'
             output = service.render_dashboard(steamid)
+    elif url_path.find('/') != -1:
+        items = url_path.split('/')
+        if len(items) == 2:
+            steamid = url_path.split('/')[0]
+            trendid = url_path.split('/')[1]
+            output = service.trend(int(steamid), trendid)
+            content_type = 'text/html'
+            output = output.encode('ascii', 'ignore')
     else:
         output = 'Unkown Request!'
         content_type = 'text/plaintext'

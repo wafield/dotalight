@@ -14,6 +14,8 @@ HTML['portal'] = 'portal.html'
 HTML['dashboard'] = 'dashboard.html'
 HTML['match_table'] = 'match_table.html'
 HTML['error'] = 'error.html'
+HTML['highchart1'] = 'highcharts1.html'
+HTML['highchart2'] = 'highcharts2.html'
 
 # Register asset before this line
 # ===============================
@@ -28,4 +30,5 @@ for key, value in HTML.items():
 HTML['dashboard'] = jinja2.Template(HTML['dashboard'])
 HTML['match_table'] = jinja2.Template(HTML['match_table'])
 HTML['error'] = jinja2.Template(HTML['error'])
-
+HTML['highchart1'] = jinja2.Template(HTML['highchart1'])
+HTML['highchart2'] = jinja2.Template(HTML['highchart2'])

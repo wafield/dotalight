@@ -4,8 +4,8 @@ import webapi
 import datetime
 
 HOST     = 'localhost'
-USER     = 'dotalight'
-DATABASE = 'dotalight'
+USER     = 'dotabuff'
+DATABASE = 'dotabuff'
 
 def upgrade_tables():
     conn = MySQLdb.connect(host=HOST, user=USER, db=DATABASE)
@@ -29,29 +29,30 @@ class Match(object):
         self.assists = db_row[11]
         self.lasthits = db_row[12]
         self.denies = db_row[13]
+        self.glod = db_row[14]
         self.level = db_row[18]
 
 def init_tables():
     conn = MySQLdb.connect(host=HOST, user=USER, db=DATABASE, charset='utf8')
     c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS players 
+    c.execute('''CREATE TABLE IF NOT EXISTS players
                  (steamid BIGINT UNSIGNED PRIMARY KEY, pname TEXT, avatar TEXT)''')
     c.execute('''CREATE TABLE IF NOT EXISTS heroes
                  (heroid SMALLINT UNSIGNED PRIMARY KEY, hname CHAR(50))''')
     c.execute('''CREATE TABLE IF NOT EXISTS matches
-                 (matchid INT UNSIGNED, accountid INT UNSIGNED, 
-                  start_time BIGINT UNSIGNED, lobby_type TINYINT UNSIGNED, 
+                 (matchid INT UNSIGNED, accountid INT UNSIGNED,
+                  start_time BIGINT UNSIGNED, lobby_type TINYINT UNSIGNED,
                   game_mode TINYINT UNSIGNED, duration SMALLINT UNSIGNED,
-                  win TINYINT UNSIGNED, 
-                  player_slot TINYINT UNSIGNED, hero_id SMALLINT UNSIGNED, 
-                  kills TINYINT UNSIGNED, deaths TINYINT UNSIGNED, 
+                  win TINYINT UNSIGNED,
+                  player_slot TINYINT UNSIGNED, hero_id SMALLINT UNSIGNED,
+                  kills TINYINT UNSIGNED, deaths TINYINT UNSIGNED,
                   assists TINYINT UNSIGNED, lasthits SMALLINT UNSIGNED,
                   denies SMALLINT UNSIGNED, gold SMALLINT UNSIGNED,
                   gold_pm SMALLINT UNSIGNED, xp_pm SMALLINT UNSIGNED,
                   gold_spent SMALLINT UNSIGNED, level TINYINT UNSIGNED,
                   PRIMARY KEY (matchid, accountid),
                   FOREIGN KEY (hero_id) REFERENCES heores(heroid))''')
-    
+
     if c.execute('SELECT count(*) from heroes') and c.fetchone()[0] == 0:
         js = webapi.get_heroes()
         heroes = json.loads(js)['result']['heroes']
@@ -66,7 +67,7 @@ def init_tables():
     conn.close()
     return
 
-    
+
 def connect_db():
     db = MySQLdb.connect(host=HOST, user=USER, db=DATABASE, charset='utf8')
     return db
@@ -88,7 +89,7 @@ def get_player_summaries(steamids, db=None):
     if db is None:
         conn.close()
     return success
-    
+
 def insert_player_summaries(js, db=None):
     pinfo = json.loads(js)['response']['players']
     if db is None:
@@ -161,10 +162,10 @@ def insert_match(js, accountid, db=None):
         if player['account_id'] == accountid:
             our_player = player
             break
-    
+
     if our_player is None:
         return False
-    
+
     matchid    = details['match_id']
     start_time = details['start_time']
     lobby_type = details['lobby_type']
@@ -185,14 +186,14 @@ def insert_match(js, accountid, db=None):
     gold_spent = player['gold_spent']
     level      = player['level']
 
-    value = (matchid, accountid, start_time, 
+    value = (matchid, accountid, start_time,
              lobby_type, game_mode, duration, win,
              p_slot, hero_id, kills, deaths,
              assists, last_hits, denies, gold,
              gold_pm, xp_pm, gold_spent, level)
 
     insert_sql = 'INSERT INTO matches VALUES (%s)' % ('%s,' * (len(value)-1) + '%s')
-    
+
     if db is None:
         conn = connect_db()
     else:
@@ -223,5 +224,5 @@ def get_matches_for_player(steamid, heroid, db=None):
     if db is None:
         conn.close()
     return map(lambda row: Match(row), ret)
-    
-    
+
+
