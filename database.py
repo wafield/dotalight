@@ -4,8 +4,8 @@ import webapi
 import datetime
 
 HOST     = 'localhost'
-USER     = 'dotabuff'
-DATABASE = 'dotabuff'
+USER     = 'dotalight'
+DATABASE = 'dotalight'
 
 def upgrade_tables():
     conn = MySQLdb.connect(host=HOST, user=USER, db=DATABASE)
