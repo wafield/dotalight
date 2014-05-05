@@ -1,3 +1,6 @@
+{% if matches|length == 0 %}
+No Matches Recorded for This Player!
+{% else %}
 <script id="chart_script" type="text/javascript">
     $('#chart_script').parent().highcharts({
         title: {
@@ -41,3 +44,4 @@
         ]
     });
 </script>
+{% endif %}
